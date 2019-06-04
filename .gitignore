@@ -5,3 +5,7 @@ config.status
 Makefile
 alarm
 autom4te.cache/
+src/main.o
+src/.deps/
+src/.dirstamp
+.vscode/
