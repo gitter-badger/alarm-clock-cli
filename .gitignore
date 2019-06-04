@@ -3,3 +3,5 @@ config.h
 config.log
 config.status
 Makefile
+alarm
+autom4te.cache/*
