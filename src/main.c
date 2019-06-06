@@ -4,6 +4,9 @@
 #include <time.h>
 #include <getopt.h>
 #include <unistd.h>
+#include <sqlite3.h>
+
+#define DATABASE "~/.alarms_database.db"
 
 enum operations
 {
@@ -63,6 +66,14 @@ void playSound(char *soundPath)
 	char *playSoundCommand = (char *)malloc(sizeof(char) * (strlen(soundPath) + strlen(playSoundCommandTemplate)));
 	sprintf(playSoundCommand, playSoundCommandTemplate, soundPath);
 	system(playSoundCommand);
+}
+
+sqlite3 *initDatabase()
+{
+	sqlite3 *db;
+	sqlite3_open(DATABASE, db);
+
+	return db;
 }
 
 int main(int argc, char *argv[])
