@@ -1,11 +1,11 @@
-# include<stdio.h>
-# include<stdlib.h>
-# include<string.h>
-# include<time.h>
-# include<getopt.h>
-# include<unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <getopt.h>
+#include <unistd.h>
 
-enum operations 
+enum operations
 {
 	ADD
 };
@@ -20,21 +20,20 @@ struct Options
 
 struct Options *parseArguments(int argc, char *argv[])
 {
-	struct Options *options = (struct options*) malloc(sizeof(struct Options));
+	struct Options *options = (struct options *)malloc(sizeof(struct Options));
 	int c;
 
-	static struct option long_options[] = 
-	{
-		{ "add", no_argument, 0, 'a' },
-		{ "at", required_argument, 0, 't'},
-		{ "name", required_argument, 0, 'n'},
-		{ "plays", required_argument, 0, 'p'},
-		{0, 0, 0, 0}
-	};
+	static struct option long_options[] =
+		{
+			{"add", no_argument, 0, 'a'},
+			{"at", required_argument, 0, 't'},
+			{"name", required_argument, 0, 'n'},
+			{"plays", required_argument, 0, 'p'},
+			{0, 0, 0, 0}};
 
 	int option_index = 0;
 
-	while((c = getopt_long(argc, argv, "ft:", long_options, &option_index)) != -1)
+	while ((c = getopt_long(argc, argv, "ft:", long_options, &option_index)) != -1)
 	{
 		switch (c)
 		{
@@ -58,18 +57,25 @@ struct Options *parseArguments(int argc, char *argv[])
 	return options;
 }
 
+void playSound(char *soundPath)
+{
+	const char *playSoundCommandTemplate = "mpg321 \"%s\"";
+	char *playSoundCommand = (char *)malloc(sizeof(char) * (strlen(soundPath) + strlen(playSoundCommandTemplate)));
+	sprintf(playSoundCommand, playSoundCommandTemplate, soundPath);
+	system(playSoundCommand);
+}
+
 int main(int argc, char *argv[])
 {
-	const char *playMusicCommandTemplate = "rhythmbox \"%s\"";
 	struct Options *options = parseArguments(argc, argv);
-	char *playMusicCommand = (char*) malloc(sizeof(char) * (strlen(options->plays) + strlen(playMusicCommandTemplate)));	
 	int alarmHour, alarmMin;
 
 	sscanf(options->at, "%d:%d", &alarmHour, &alarmMin);
 
 	printf("\n%s\n%s\n%s\n", options->name, options->at, options->plays);
 
-	do {
+	do
+	{
 		time_t rawtime;
 		struct tm *timeinfo;
 		time(&rawtime);
@@ -77,17 +83,14 @@ int main(int argc, char *argv[])
 		printf("%0.2d\n", timeinfo->tm_hour);
 		printf("%0.2d\n", timeinfo->tm_min);
 
-		if(timeinfo->tm_hour == alarmHour && timeinfo->tm_min == alarmMin)
+		if (timeinfo->tm_hour == alarmHour && timeinfo->tm_min == alarmMin)
 		{
-			sprintf(playMusicCommand, playMusicCommandTemplate, options->plays);
-			printf("Executing command: %s\n\n", playMusicCommand);
-			system(playMusicCommand);
-
+			playSound(options->plays);
 			return 0;
 		}
 
 		sleep(60);
-	} while(1);
+	} while (1);
 
 	return 0;
 }
